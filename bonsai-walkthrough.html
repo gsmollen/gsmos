@@ -522,7 +522,6 @@ let cur=0;
 
 function vidHtml(v){
   if(!v) return `<div class="vid-bar"><div class="play"></div><div class="vid-lbl"><strong>Watch the video</strong><span>Video link to be added</span></div></div>`;
-  // detect youtube / vimeo
   let src=v;
   const yt=v.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
   const vm=v.match(/vimeo\.com\/(\d+)/);
@@ -535,7 +534,6 @@ function build(){
   const nav=document.getElementById('sbNav');
   const secs=document.getElementById('secs');
   DATA.forEach((d,i)=>{
-    // nav button
     const b=document.createElement('button');
     b.className='nb'+(i===0?' active':'');
     b.dataset.i=i;
@@ -543,7 +541,6 @@ function build(){
     b.addEventListener('click',()=>go(i));
     nav.appendChild(b);
 
-    // section
     const tkItems=d.tk.map(t=>`<li>${t}</li>`).join('');
     const s=document.createElement('div');
     s.className='sec'+(i===0?' active':'');
