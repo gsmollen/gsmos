@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bonsai — Click-by-Click Guide</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#2D4A2D;--green-h:#3a5e3a;--sand:#C8B89A;
+  --off:#F5F2EC;--text:#2a2a2a;--muted:#666;--sw:272px;
+}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--off);color:var(--text);line-height:1.6}
+
+/* sidebar */
+.sidebar{position:fixed;inset:0 auto 0 0;width:var(--sw);background:var(--green);display:flex;flex-direction:column;overflow-y:auto;z-index:200}
+.sb-head{padding:28px 22px 20px;border-bottom:1px solid rgba(200,184,154,.2)}
+.sb-head h1{font-family:Georgia,serif;font-size:17px;font-weight:normal;color:var(--sand);line-height:1.3}
+.sb-head p{font-size:11px;color:rgba(200,184,154,.5);text-transform:uppercase;letter-spacing:.09em;margin-top:4px}
+.sb-nav{padding:10px 0 24px}
+.nb{width:100%;background:none;border:none;border-left:3px solid transparent;padding:11px 20px;display:flex;align-items:flex-start;gap:11px;cursor:pointer;text-align:left;transition:background .15s}
+.nb:hover{background:rgba(200,184,154,.1)}
+.nb.active{background:rgba(200,184,154,.14);border-left-color:var(--sand)}
+.nb-num{font-size:10.5px;color:rgba(200,184,154,.4);min-width:22px;padding-top:2px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.nb.active .nb-num{color:var(--sand)}
+.nb-tag{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(200,184,154,.45);margin-bottom:2px}
+.nb.active .nb-tag{color:rgba(200,184,154,.8)}
+.nb-name{font-size:13.5px;color:rgba(255,255,255,.7);line-height:1.35}
+.nb.active .nb-name{color:#fff;font-weight:500}
+
+/* main */
+.main{margin-left:var(--sw);min-height:100vh}
+.sec{display:none}
+.sec.active{display:block}
+.sec-inner{max-width:820px;padding:52px 56px 0}
+.sec-tag{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#7a6040;margin-bottom:8px}
+.sec-title{font-family:Georgia,serif;font-size:36px;font-weight:normal;color:var(--green);line-height:1.2;margin-bottom:8px}
+.sec-intro{font-size:15px;color:#444;line-height:1.7;margin-bottom:32px;padding-bottom:24px;border-bottom:1px solid rgba(200,184,154,.4)}
+
+/* phase headings */
+.phase{
+  font-family:Georgia,serif;font-size:15px;font-weight:normal;
+  color:var(--green);text-transform:uppercase;letter-spacing:.08em;
+  margin:32px 0 14px;display:flex;align-items:center;gap:10px;
+}
+.phase::after{content:'';flex:1;height:1px;background:rgba(200,184,154,.4)}
+
+/* steps */
+.steps{display:flex;flex-direction:column;gap:12px;margin-bottom:8px}
+.step{display:flex;gap:14px;align-items:flex-start}
+.sn{
+  width:28px;height:28px;border-radius:50%;background:var(--green);
+  color:#fff;font-size:12.5px;font-weight:600;display:flex;align-items:center;
+  justify-content:center;flex-shrink:0;margin-top:1px;
+}
+.sc{flex:1}
+.sh{font-size:15px;font-weight:600;color:#1a1a1a;margin-bottom:4px}
+.sc p{font-size:14.5px;line-height:1.68;color:#333;margin-bottom:6px}
+.sc p:last-child{margin-bottom:0}
+.sc ul{list-style:none;padding:0;margin:6px 0 0}
+.sc li{font-size:14px;line-height:1.65;color:#444;padding:3px 0 3px 16px;position:relative}
+.sc li::before{content:'·';position:absolute;left:4px;color:#9a7a56;font-size:16px;line-height:1.3}
+.sc li strong{color:#1a1a1a}
+.sc li code{background:rgba(45,74,45,.1);padding:1px 5px;border-radius:3px;font-size:13px;font-family:monospace;color:var(--green)}
+
+/* nav path — breadcrumb style instruction */
+.path{
+  display:inline-flex;align-items:center;gap:4px;flex-wrap:wrap;
+  background:rgba(45,74,45,.07);border-radius:4px;padding:4px 10px;
+  font-size:13px;color:var(--green);margin:4px 0 8px;
+}
+.path span{color:#9a7a56}
+
+/* callout */
+.callout{background:rgba(200,184,154,.18);border-left:3px solid var(--sand);border-radius:0 5px 5px 0;padding:11px 15px;margin:10px 0;font-size:14px;color:#444;line-height:1.65}
+.callout strong{color:var(--green)}
+
+/* checklist (before you move on) */
+.ck-wrap{max-width:820px;padding:0 56px;margin-top:40px}
+.ck{background:var(--green);border-radius:8px;padding:22px 26px}
+.ck-head{display:flex;align-items:center;gap:9px;margin-bottom:16px}
+.ck-icon{width:22px;height:22px;background:var(--sand);border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:13px;color:var(--green);flex-shrink:0}
+.ck-head span{font-family:Georgia,serif;font-size:13px;color:var(--sand);text-transform:uppercase;letter-spacing:.08em}
+.ck ul{list-style:none;padding:0;margin:0}
+.ck li{display:flex;align-items:flex-start;gap:10px;padding:8px 0;border-bottom:1px solid rgba(200,184,154,.13)}
+.ck li:last-child{border-bottom:none}
+.ck label{font-size:14px;line-height:1.55;color:rgba(255,255,255,.85);cursor:pointer;flex:1}
+.ck input[type=checkbox]{
+  appearance:none;-webkit-appearance:none;width:16px;height:16px;
+  border:1.5px solid rgba(200,184,154,.5);border-radius:3px;
+  background:transparent;cursor:pointer;flex-shrink:0;margin-top:2px;
+  transition:all .15s;
+}
+.ck input[type=checkbox]:checked{background:var(--sand);border-color:var(--sand)}
+.ck input[type=checkbox]:checked+label{color:rgba(255,255,255,.45);text-decoration:line-through;text-decoration-color:rgba(255,255,255,.3)}
+
+/* nav footer */
+.nav-foot{max-width:820px;padding:24px 56px 44px;display:flex;align-items:center;justify-content:space-between;margin-top:28px;border-top:1px solid rgba(45,74,45,.12)}
+.step-ct{font-size:13px;color:var(--muted)}
+.nav-btns{display:flex;gap:10px}
+.btn{padding:9px 20px;border-radius:6px;font-size:14px;cursor:pointer;font-family:inherit;border:none;transition:all .14s;line-height:1}
+.btn-g{background:none;border:1.5px solid rgba(45,74,45,.25);color:var(--green)}
+.btn-g:hover:not(:disabled){border-color:var(--green);background:rgba(45,74,45,.06)}
+.btn-s{background:var(--green);color:#fff}
+.btn-s:hover:not(:disabled){background:var(--green-h)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* mobile */
+.mob-head{display:none}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:199}
+.overlay.show{display:block}
+
+@media(max-width:780px){
+  .sidebar{transform:translateX(-100%);transition:transform .24s ease}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .mob-head{display:flex;align-items:center;justify-content:space-between;padding:14px 18px;background:var(--green);position:sticky;top:0;z-index:100}
+  .mob-head span{font-family:Georgia,serif;font-size:14px;color:var(--sand)}
+  .hbg{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;gap:5px;padding:4px}
+  .hbg i{display:block;width:20px;height:2px;background:var(--sand);border-radius:2px}
+  .sec-inner{padding:28px 20px 0}
+  .sec-title{font-size:26px}
+  .ck-wrap{padding:0 20px}
+  .nav-foot{padding:20px 20px 36px}
+}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <h1>Bonsai Click-by-Click</h1>
+    <p>Step-by-Step Guide</p>
+  </div>
+  <nav class="sb-nav" id="sbNav"></nav>
+</aside>
+
+<main class="main">
+  <div class="mob-head">
+    <span>Bonsai Click-by-Click</span>
+    <button class="hbg" id="menuBtn" aria-label="Menu"><i></i><i></i><i></i></button>
+  </div>
+  <div id="secs"></div>
+</main>
+
+<script>
+// uid counter for checkbox IDs
+let uid=0;
+function cid(){return 'ck'+(++uid)}
+
+// helper: path breadcrumb
+function p(...steps){
+  return `<div class="path">${steps.map((s,i)=>i===0?`<strong>${s}</strong>`:`<span>›</span><strong>${s}</strong>`).join('')}</div>`;
+}
+
+const DATA=[
+{
+  tag:"Overview",
+  title:"How to Use This Guide",
+  intro:"A step-by-step companion to the Bonsai walkthrough videos, covering the full project lifecycle. Work through it on your first live project. Each section maps to a chapter in the walkthrough — watch the video first, then use these steps to do it.",
+  sections:[
+    {
+      heading:"Before You Start",
+      steps:[
+        {h:"Confirm account setup is complete",body:`<p>The following should already be in place before running a project through Bonsai. Check with your admin if any are missing.</p><ul><li>Team members added with correct roles (principal, PM, contractor)</li><li>Rate cards created per project type (Residential, Commercial, etc.)</li><li>Services table populated with your service offerings</li><li>Proposal and contract templates saved per build type</li><li>Task templates created for each project phase</li><li>General Timekeeping project set up for non-billable hours</li></ul>`},
+        {h:"Open Bonsai and orient yourself",body:`<p>The left sidebar is your main navigation. The objects you'll use most:</p><ul><li><strong>Projects</strong> — everything lives here</li><li><strong>Companies</strong> — clients and their contacts</li><li><strong>Invoices</strong> — all invoices across all projects</li><li><strong>Time Tracking</strong> — all logged time across all projects</li><li><strong>Tasks</strong> — all tasks across all projects</li><li><strong>Reports</strong> — utilization, profitability, health</li></ul>`}
+      ]
+    }
+  ],
+  checks:["Team roles and rate cards are set up","Proposal and contract templates exist per build type","Task templates exist for each project phase","General Timekeeping project is live"]
+},
+{
+  tag:"Chapter 01",
+  title:"Lead to Agreement",
+  intro:"From a lead coming in to a signed contract with deposit paid. Do these steps when a new enquiry lands.",
+  sections:[
+    {
+      heading:"Create the Client and Contact",
+      steps:[
+        {h:"Create the company (client)",body:`${p('Companies','New Company')}<p>Enter: company name, address, and any other details you have. Save.</p>`},
+        {h:"Add the primary contact",body:`${p('Company record','Contacts tab','New Contact')}<p>Enter: first name, last name, email, phone. Tick <strong>Primary Contact</strong>. Save.</p><p>Add more contacts if needed — they won't be primary unless you set them as such.</p>`}
+      ]
+    },
+    {
+      heading:"Create the Project Shell",
+      steps:[
+        {h:"Create a new project",body:`${p('Projects','New Project')}<p>Or create it from inside the company record (Projects tab → New Project) — either way it links automatically.</p><ul><li>Enter a placeholder project name (you can rename it at setup)</li><li>Link it to the company you just created</li><li>Set <strong>Status</strong> to <code>Lead</code></li></ul>`},
+        {h:"Save and review your leads view",body:`<p>From the Projects list, filter or switch to your saved Leads view. The new project should appear. This is your deal pipeline.</p>`}
+      ]
+    },
+    {
+      heading:"Build and Send a Proposal (if needed)",
+      steps:[
+        {h:"Create a new proposal from template",body:`${p('Project record','Proposals tab','New Proposal')}<p>Select the template that matches the build type (custom home, residential remodel, commercial, multifamily). The template pre-populates — you only need to edit client-specific content.</p>`},
+        {h:"Customise the proposal",body:`<p>Work through each section:</p><ul><li><strong>Scope of work</strong> — update to match this project</li><li><strong>Work breakdown</strong> — adjust phases and deliverables</li><li><strong>Fee schedule</strong> — update amounts. If using a service, select it from the services table and set quantity</li><li><strong>Payment schedule</strong> — add as a text section with a table (it's not a native field)</li></ul>`},
+        {h:"Set the expiration date and save as template if improved",body:`<p>Right panel: set an <strong>Expiration Date</strong> (typically 30 days). If you've improved the template, click <strong>Save as Template</strong> and overwrite the existing one.</p>`},
+        {h:"Send the proposal",body:`<p>Click <strong>Send</strong> to send natively via Bonsai (client gets an email with a link to view and accept).</p><p>Or click <strong>Copy Link</strong> and send via your own email.</p>`},
+        {h:"Update project status",body:`${p('Project record','Settings','Details')}<p>Change status to <code>Proposal Sent</code>.</p>`},
+        {h:"When accepted: mark the proposal accepted",body:`<p>If accepted verbally or outside the platform: open the proposal → <strong>Mark as Accepted</strong>.</p><p>If accepted via the Bonsai link: it updates automatically.</p>`}
+      ]
+    },
+    {
+      heading:"Build and Send a Contract",
+      steps:[
+        {h:"Create a new contract from template",body:`${p('Project record','Contracts tab','New Contract')}<p>Select the template that matches the build type. The template pre-populates.</p>`},
+        {h:"Add client-specific legal language",body:`<p>Edit the sections that need client-specific detail. Leave standard clauses as-is.</p>`},
+        {h:"Enable Require Upfront Payment",body:`<p>In the contract settings (right panel or top settings area): toggle on <strong>Require Upfront Payment</strong>.</p><div class="callout"><strong>This is the key step.</strong> When the client signs, the retainer invoice is created and sent to them automatically.</div>`},
+        {h:"Sign the contract yourself",body:`<p>Click <strong>Sign</strong> and add your signature. You must sign first before sending to the client.</p>`},
+        {h:"Send to the client",body:`<p>Click <strong>Send</strong>. The client receives an email with a link to view and sign.</p>`},
+        {h:"Update project status",body:`${p('Project record','Settings','Details')}<p>Change status to <code>Contract Sent</code>.</p>`},
+        {h:"Once signed and deposit paid",body:`<p>Bonsai moves the contract status through: Sent → Awaiting Deposit → Signed and Paid.</p><p>When it reaches Signed and Paid: update the project status to <code>Active</code>. The project is live.</p>`}
+      ]
+    }
+  ],
+  checks:["Company and primary contact created","Project shell created with status = Lead","Proposal sent (if required) and accepted","Contract signed by both parties","Retainer invoice paid","Project status updated to Active"]
+},
+{
+  tag:"Chapter 02",
+  title:"Project Setup",
+  intro:"Contract's signed and deposit paid. Do these steps to configure the project before any work begins. Open the project — you land on the home dashboard.",
+  sections:[
+    {
+      heading:"Project Details",
+      steps:[
+        {h:"Enter the project details",body:`${p('Project record','Settings','Details')}<ul><li>Enter the <strong>Project ID</strong></li><li>Set the <strong>Start Date</strong></li><li>If you're not ready to notify the team yet: toggle on <strong>Tentative</strong></li><li>Set client reminder preferences for invoices and expiring documents</li></ul>`}
+      ]
+    },
+    {
+      heading:"Billing and Rate Card",
+      steps:[
+        {h:"Set the billing method",body:`${p('Project record','Settings','Billing')}<p>Select <strong>Member hourly rate</strong> as the billing method (this uses the rate card).</p>`},
+        {h:"Apply the rate card",body:`<p>In the same Billing settings: select the <strong>Rate Card</strong> that matches the project type (e.g. Residential, Commercial).</p><p>The rate card pulls the correct billable rate per team member role. You set this up once at the account level — it applies here automatically.</p>`}
+      ]
+    },
+    {
+      heading:"Budget",
+      steps:[
+        {h:"Set the project budget",body:`${p('Project record','Settings','Budget')}<ul><li>Choose <strong>by time</strong> (hours) for fixed fee projects — e.g. 240 hours for Granite Drive</li><li>Set tracking to <strong>Billable + Non-billable</strong></li><li>Enter the first alert threshold: <strong>70%</strong>. The PM gets an email at this point</li></ul><div class="callout"><strong>SOP note:</strong> when the 70% alert fires, update the threshold to the next level (e.g. 85%) so the next alert is meaningful.</div>`}
+      ]
+    },
+    {
+      heading:"Task Lists and Templates",
+      steps:[
+        {h:"Create task lists (project phases)",body:`${p('Project record','Settings','Task Lists')}<p>Add a task list for each phase. Typical phases:</p><ul><li>Pre-Design</li><li>Schematic Design</li><li>Design Development</li><li>Construction Documents</li><li>Construction Administration</li></ul><p>Name them exactly as your task templates expect, so they match on import.</p>`},
+        {h:"Apply task templates to each phase",body:`${p('Project record','Tasks tab')}<p>For each task list (phase):</p><ul><li>Click the task list name → <strong>Apply Template</strong></li><li>Select the template for that phase (e.g. "Schematic Design Tasks")</li><li>Tasks drop in under that phase</li></ul><p>Repeat for every phase that has a template.</p>`},
+        {h:"Group tasks by task list",body:`<p>In the Tasks view: click <strong>Group by</strong> → <strong>Task List</strong>. Each phase sits together as a group.</p>`},
+        {h:"Configure each task",body:`<p>For each task, set:</p><ul><li><strong>Assignee</strong> — the team member responsible</li><li><strong>Priority</strong> — high / medium / low</li><li><strong>Time estimate</strong> — hours expected</li><li><strong>Start date</strong> and <strong>Due date</strong> — needed for Gantt and Workload views</li></ul><p>Switch to <strong>Gantt view</strong> once dates are set to see the full timeline.</p>`}
+      ]
+    },
+    {
+      heading:"Custom Fields",
+      steps:[
+        {h:"Fill in the project custom fields",body:`${p('Project record','Home dashboard','Custom Fields section')}<p>Set the initial values for:</p><ul><li>Retainer status</li><li>Progress invoice statuses (1, 2, etc.)</li><li>90-day trigger date</li><li>Last contact date</li><li>Consultant fields (if applicable)</li></ul>`}
+      ]
+    },
+    {
+      heading:"Team",
+      steps:[
+        {h:"Add team members to the project",body:`${p('Project record','Settings','Team')}<p>Click <strong>Add Member</strong> and select everyone working on the project. Their role and rate card assignment carries over from their profile.</p>`}
+      ]
+    },
+    {
+      heading:"Milestone Invoices",
+      steps:[
+        {h:"Create and schedule milestone invoices",body:`${p('Project record','Billing tab','New Invoice')}<p>For each milestone (progress draw):</p><ul><li>Enter the invoice name (e.g. "Progress Invoice 1 — Schematic Design")</li><li>Add the line item: custom text with the milestone name and amount</li><li>Set the <strong>Issue Date</strong> to the target send date (e.g. 90 days from project start)</li><li>Save — it schedules automatically</li></ul><p>Repeat for each milestone. Bonsai will notify you the day before each scheduled send so you can cancel or amend.</p>`}
+      ]
+    }
+  ],
+  checks:["Project ID and start date entered","Rate card applied","Budget set with 70% alert threshold","Task lists created for all phases","Task templates applied and tasks configured with estimates and dates","Team members added","Custom fields filled in","All milestone invoices created and scheduled"]
+},
+{
+  tag:"Chapter 03",
+  title:"Project Execution",
+  intro:"The day-to-day: logging time, managing tasks, keeping project state current, and handling expenses. These are the recurring actions throughout the life of a project.",
+  sections:[
+    {
+      heading:"Logging Time",
+      steps:[
+        {h:"Log time using the live timer",body:`<p>Click the <strong>timer icon</strong> in the top-right corner of Bonsai.</p><ul><li>Select the <strong>Project</strong></li><li>Select the <strong>Task</strong> you're working on</li><li>Set <strong>Billable</strong> or <strong>Non-billable</strong> (the rate from project settings applies)</li><li>Click start. Click stop when done. The session is saved to the task.</li></ul>`},
+        {h:"Log time after the fact",body:`${p('Project record','Tasks tab','open the task','Time tab')}<ul><li>Click <strong>Add Time</strong></li><li>Enter: hours, date, optional note</li><li>Set billable / non-billable</li><li>Click save. Time rolls up to the project budget and Insights.</li></ul>`},
+        {h:"Mark billing status correctly on fixed fee projects",body:`<div class="callout"><strong>Fixed fee workflow:</strong> mark all standard project time as <strong>Billed</strong>. Mark additional-service time as <strong>Unbilled</strong>. This separates what flows to invoices — only unbilled time shows up when you add an "unbilled time" line item to a manual invoice.</div>`}
+      ]
+    },
+    {
+      heading:"Managing Tasks",
+      steps:[
+        {h:"Update a task status",body:`<p>From the <strong>Tasks tab</strong>: click the status badge next to the task name and select the new status.</p><p>Or open the task → change status from inside. You can also see/edit custom fields, add subtasks, attach files, and write notes from inside a task.</p>`},
+        {h:"View only your tasks (or someone else's)",body:`${p('Tasks tab')}<p>Click <strong>Filter</strong> → <strong>Assignee</strong> → select a name. This shows only tasks assigned to that person. Group by <strong>Project</strong> to organise across projects.</p>`},
+        {h:"View tasks across all projects",body:`${p('Tasks (left sidebar — global object)')}<p>This shows every task on every project. Filter, sort, and group the same way. You can update multiple tasks at once by selecting them and using the bulk action bar.</p>`},
+        {h:"Check the Workload view",body:`${p('Tasks (global)','Workload view')}<p>Switch to the Workload view to see each team member's allocated hours vs capacity.</p><ul><li>Tasks without estimates appear as "unplanned" — they don't allocate capacity</li><li>If a task shows here, it has a start date, due date, and estimate set</li><li>Use this view when allocating new work to check who has capacity</li></ul>`}
+      ]
+    },
+    {
+      heading:"Keeping Project State Current",
+      steps:[
+        {h:"Update custom fields after every client interaction",body:`${p('Project record','Home dashboard','Custom Fields section')}<p>After a client call, email, or meeting, update:</p><ul><li><strong>Status</strong> — active / waiting on client / waiting on consultant</li><li><strong>Last contact date</strong> — today's date</li><li>Any other relevant fields</li></ul><p>These bubble up to the portfolio view — keeping them current means anyone can see project state without asking.</p>`},
+        {h:"Check the portfolio view regularly",body:`${p('Projects (left sidebar)')}<p>Use the main Projects list to see all active projects and their custom field values at a glance. Set up a saved view that shows the fields you care about (status, last contact, 90-day trigger).</p>`}
+      ]
+    },
+    {
+      heading:"Adding Expenses",
+      steps:[
+        {h:"Add an expense to the project",body:`${p('Project record','Expenses tab','Add Expense')}<ul><li>Enter: name, amount, date</li><li>Set <strong>Billable</strong> or <strong>Non-billable</strong></li><li>Add markup percentage if applicable</li><li>Attach a receipt photo or file</li><li>Select a category (set up in bookkeeping settings)</li><li>Save</li></ul>`},
+        {h:"Bill an expense",body:`<p>To include it on an invoice: open the invoice → Add Line Item → <strong>Expense</strong> → select the unbilled expense. Once invoiced, it's marked as billed automatically.</p>`}
+      ]
+    },
+    {
+      heading:"Closing Out a Project",
+      steps:[
+        {h:"Confirm the final invoice is paid",body:`${p('Project record','Billing tab')}<p>Check all invoices show as <strong>Paid</strong>. If any are outstanding, chase them before closing.</p>`},
+        {h:"Mark the project complete",body:`${p('Project record','Settings','Details')}<p>Change the project status to <code>Complete</code>. Update any custom fields to reflect the final state.</p>`},
+        {h:"Archive if desired",body:`<p>In the Projects list: right-click the project (or use the three-dot menu) → <strong>Archive</strong>. Archived projects are hidden from the main view but remain accessible via the archived filter.</p>`}
+      ]
+    }
+  ],
+  checks:["Time logged to the correct task and billing status set correctly","Task statuses kept up to date","Custom fields updated after every client interaction","Expenses added, categorised, and billed where applicable","Workload view reviewed when allocating new work"]
+},
+{
+  tag:"Chapter 04",
+  title:"Invoicing",
+  intro:"The full invoicing loop. Retainer and milestone invoices are handled at setup and automatically; this covers manual invoices (for expenses and additional services) and the global invoice management workflow.",
+  sections:[
+    {
+      heading:"One-Time: Global Invoice Settings",
+      steps:[
+        {h:"Configure global invoice settings",body:`${p('Settings (gear icon or account menu)','Invoices')}<p>Set once — applies to all invoices:</p><ul><li>Toggle on: <strong>Attach PDF to email</strong></li><li>Toggle on: <strong>Lock attachments until paid</strong> (if applicable)</li><li>Optionally enable partial payments or tipping</li></ul>`},
+        {h:"Set account invoice defaults",body:`${p('My Account','Defaults','Invoices')}<ul><li>Default <strong>late fee</strong> percentage and grace period</li><li>Default <strong>tax rates</strong></li><li>Default <strong>days until due</strong> (e.g. 14 or 30)</li><li>Default <strong>note</strong> that appears on every invoice</li><li>Your <strong>tax ID</strong></li></ul>`}
+      ]
+    },
+    {
+      heading:"Creating a Manual Invoice",
+      steps:[
+        {h:"Start a new invoice",body:`${p('Project record','Billing tab','New Invoice')}<p>Or from the global Invoices object: <strong>New Invoice</strong> → link to the project.</p>`},
+        {h:"Add line items",body:`<p>Click <strong>Add Line Item</strong> and choose the type:</p><ul><li><strong>Custom text</strong> — for a fixed milestone payment. Enter description and amount</li><li><strong>Service</strong> — links to a service from your services table</li><li><strong>Expense</strong> — pulls in unbilled expenses. Select which ones to include</li><li><strong>Unbilled time</strong> — for billing additional services. Select the unbilled sessions; display by service, role, or task</li></ul>`},
+        {h:"Check invoice settings (right panel)",body:`<p>Review and override if needed:</p><ul><li>Tax rate, late fee, payment methods</li><li>Due date (or change days-until-due)</li><li>Add any invoice-specific note</li></ul>`},
+        {h:"Set the issue date",body:`<ul><li><strong>Send now:</strong> leave as today's date → click Send</li><li><strong>Schedule:</strong> set a future date → the invoice saves as Scheduled and sends automatically on that date</li></ul>`},
+        {h:"Send the invoice",body:`<p>Click <strong>Send</strong> — client receives an email with the invoice and a pay link (card or bank transfer).</p><p>Or click <strong>Copy Link</strong> to send via your own email.</p><p>Payment via the link marks the invoice paid automatically in Bonsai and syncs to QuickBooks.</p>`},
+        {h:"Record a payment received outside Bonsai",body:`<p>If a client pays by cheque, EFT, or any other method outside the Bonsai link:</p>${p('Invoice record','Record Payment')}<p>Enter: amount, payment date, method. The invoice status updates to Paid.</p>`}
+      ]
+    },
+    {
+      heading:"Managing Invoices Globally",
+      steps:[
+        {h:"Review all invoices",body:`${p('Invoices (left sidebar)')}<p>This shows every invoice across all projects. Filter by status (overdue, outstanding, drafted, scheduled, paid) or by project / company to find what you're looking for.</p>`},
+        {h:"Chase an overdue invoice",body:`<p>Open the invoice → check the reminder toggle is on (reminders run automatically, stopping 16 days after due date).</p><p>To send a manual reminder: open the invoice → <strong>Send Reminder</strong>.</p>`}
+      ]
+    }
+  ],
+  checks:["Global invoice settings and account defaults configured (one-time)","All milestone invoices created and scheduled at project setup","Manual invoices created for additional services and expenses","Billing status on time entries set correctly before invoicing unbilled time","Payment recorded for any invoices paid outside Bonsai","Project payment-status custom fields updated to reflect paid invoices"]
+},
+{
+  tag:"Chapter 05",
+  title:"Reporting &amp; Settings",
+  intro:"Checking in on how a project is tracking and reviewing the portfolio. The project Insights tab is for the active project view; the Reports object is for portfolio-level decisions.",
+  sections:[
+    {
+      heading:"Project-Level Insights",
+      steps:[
+        {h:"Open the Insights tab",body:`${p('Project record','Insights tab')}<p>Available to Owners and Partners only. Review:</p><ul><li><strong>Billing status</strong> — total billable value vs what's been invoiced. Gap = still to be billed</li><li><strong>Cost breakdown</strong> — labour cost by team member + expenses = total cost</li><li><strong>Profitability</strong> — revenue minus total cost, with margin. Updates live as work is logged</li><li><strong>Budget</strong> — time tracked vs budget over time. Shows burn rate</li><li><strong>Team members</strong> — who's logged what, billable amount, task health per person</li><li><strong>Completed tasks</strong> — estimated vs actual hours, on-time vs late</li></ul>`}
+      ]
+    },
+    {
+      heading:"Portfolio Reporting",
+      steps:[
+        {h:"Utilization report",body:`${p('Reports (left sidebar)','Utilization')}<p>Shows total time tracked as a percentage of each member's capacity. Filter to <strong>Billable only</strong> to see productive utilization. Break down by project or time period to find patterns.</p>`},
+        {h:"Project Profitability",body:`${p('Reports','Project Profitability')}<p>Margin, revenue, and total cost across all projects. Use to identify which project types or phases are most profitable.</p>`},
+        {h:"Project Billing",body:`${p('Reports','Project Billing')}<p>Billable vs unbilled amount per project. The "remaining to bill" column shows what hasn't been invoiced yet — flag anything that's overdue for invoicing.</p>`},
+        {h:"Team Profitability",body:`${p('Reports','Team Profitability')}<p>Billable revenue vs cost per team member. Also shows capacity profit (what a member could earn at full billable capacity vs their cost).</p>`},
+        {h:"Project Health",body:`${p('Reports','Project Health')}<p>A snapshot across all projects: budget progress, task completion, and on-track / at-risk status.</p><ul><li>Set health manually for any project needing attention: click the health field → select At Risk / Needs Attention / Good</li><li>Review as part of your weekly PM check-in</li></ul>`}
+      ]
+    },
+    {
+      heading:"Exporting Data",
+      steps:[
+        {h:"Export data for custom reporting",body:`${p('Account menu','Data')}<p>Download any Bonsai data as a CSV — projects, time entries, invoices, expenses, etc. Use this to build bespoke reports or feed the supplementary Google Sheet for portfolio WIP tracking (which Bonsai can't do natively).</p>`}
+      ]
+    },
+    {
+      heading:"Key Settings (Reference)",
+      steps:[
+        {h:"Account-wide defaults",body:`${p('Account menu','Defaults')}<p>Rates, reminders, and invoice defaults that flow into every new project. Change here to update the default for future projects (doesn't affect existing ones).</p>`},
+        {h:"Permissions",body:`${p('Account menu','Team','Permissions')}<p>Controls who sees what. Insights is restricted to Owners and Partners by default. Adjust here if access needs to change.</p>`},
+        {h:"Company settings (branding and integrations)",body:`${p('Account menu','Company')}<p>Upload your logo and set business details for proposals, contracts, and invoices. Manage integrations here, including QuickBooks.</p>`}
+      ]
+    }
+  ],
+  checks:["Project Insights reviewed at regular intervals during the project","Portfolio reports reviewed weekly or at month-end","Project Health statuses kept current","Data exported as needed for supplementary reporting","Account defaults and permissions set correctly (one-time, revisit quarterly)"]
+}
+];
+
+const N=DATA.length;
+let cur=0;
+
+function buildStep(s,idx){
+  return`<div class="step">
+    <div class="sn">${idx}</div>
+    <div class="sc"><div class="sh">${s.h}</div>${s.body}</div>
+  </div>`;
+}
+
+function buildChecks(arr,secIdx){
+  const items=arr.map(t=>{
+    const id=cid();
+    return`<li><input type="checkbox" id="${id}"><label for="${id}">${t}</label></li>`;
+  }).join('');
+  return`<div class="ck-wrap">
+    <div class="ck">
+      <div class="ck-head"><div class="ck-icon">✓</div><span>Before You Move On</span></div>
+      <ul>${items}</ul>
+    </div>
+  </div>`;
+}
+
+function build(){
+  const nav=document.getElementById('sbNav');
+  const secs=document.getElementById('secs');
+
+  DATA.forEach((d,i)=>{
+    // nav
+    const b=document.createElement('button');
+    b.className='nb'+(i===0?' active':'');
+    b.innerHTML=`<span class="nb-num">${String(i+1).padStart(2,'0')}</span><span><div class="nb-tag">${d.tag}</div><div class="nb-name">${d.title}</div></span>`;
+    b.addEventListener('click',()=>go(i));
+    nav.appendChild(b);
+
+    // section body
+    let stepCount=0;
+    const sectionsHtml=d.sections.map(sec=>{
+      const stepsHtml=sec.steps.map(s=>buildStep(s,++stepCount)).join('');
+      return`<div class="phase">${sec.heading}</div><div class="steps">${stepsHtml}</div>`;
+    }).join('');
+
+    const el=document.createElement('div');
+    el.className='sec'+(i===0?' active':'');
+    el.id='s'+i;
+    el.innerHTML=`
+      <div class="sec-inner">
+        <div class="sec-tag">${d.tag}</div>
+        <h1 class="sec-title">${d.title}</h1>
+        <p class="sec-intro">${d.intro}</p>
+        ${sectionsHtml}
+      </div>
+      ${buildChecks(d.checks,i)}
+      <div class="nav-foot">
+        <span class="step-ct">Section ${i+1} of ${N}</span>
+        <div class="nav-btns">
+          <button class="btn btn-g" ${i===0?'disabled':''} onclick="go(${i-1})">&#8592; Previous</button>
+          <button class="btn btn-s" ${i===N-1?'disabled':''} onclick="go(${i+1})">${i===N-1?'Done':'Next &#8594;'}</button>
+        </div>
+      </div>`;
+    secs.appendChild(el);
+  });
+}
+
+function go(i){
+  if(i<0||i>=N)return;
+  document.querySelectorAll('.sec').forEach((el,j)=>el.classList.toggle('active',j===i));
+  document.querySelectorAll('.nb').forEach((el,j)=>el.classList.toggle('active',j===i));
+  cur=i;
+  window.scrollTo({top:0,behavior:'smooth'});
+  closeSb();
+}
+
+function openSb(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
+function closeSb(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
+
+document.getElementById('menuBtn').addEventListener('click',openSb);
+document.getElementById('overlay').addEventListener('click',closeSb);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')go(cur+1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')go(cur-1);
+});
+
+build();
+</script>
+</body>
+</html>
