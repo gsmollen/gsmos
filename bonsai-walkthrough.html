@@ -1,0 +1,597 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bonsai Walkthrough — Companion Guide</title>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#2D4A2D;
+  --green-h:#3a5e3a;
+  --sand:#C8B89A;
+  --off:#F5F2EC;
+  --text:#2a2a2a;
+  --muted:#666;
+  --sw:272px;
+}
+body{font-family:system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;background:var(--off);color:var(--text);line-height:1.6}
+
+/* ── SIDEBAR ── */
+.sidebar{
+  position:fixed;inset:0 auto 0 0;width:var(--sw);
+  background:var(--green);display:flex;flex-direction:column;
+  overflow-y:auto;z-index:200;
+}
+.sb-head{padding:28px 22px 20px;border-bottom:1px solid rgba(200,184,154,.2)}
+.sb-head h1{font-family:Georgia,serif;font-size:17px;font-weight:normal;color:var(--sand);line-height:1.3}
+.sb-head p{font-size:11px;color:rgba(200,184,154,.5);text-transform:uppercase;letter-spacing:.09em;margin-top:4px}
+.sb-nav{padding:10px 0 24px}
+.nb{
+  width:100%;background:none;border:none;border-left:3px solid transparent;
+  padding:11px 20px 11px 20px;display:flex;align-items:flex-start;gap:11px;
+  cursor:pointer;text-align:left;transition:background .15s;
+}
+.nb:hover{background:rgba(200,184,154,.1)}
+.nb.active{background:rgba(200,184,154,.14);border-left-color:var(--sand)}
+.nb-num{font-size:10.5px;color:rgba(200,184,154,.4);min-width:22px;padding-top:2px;flex-shrink:0;font-variant-numeric:tabular-nums}
+.nb.active .nb-num{color:var(--sand)}
+.nb-tag{font-size:10px;text-transform:uppercase;letter-spacing:.08em;color:rgba(200,184,154,.45);margin-bottom:2px}
+.nb.active .nb-tag{color:rgba(200,184,154,.8)}
+.nb-name{font-size:13.5px;color:rgba(255,255,255,.7);line-height:1.35}
+.nb.active .nb-name{color:#fff;font-weight:500}
+
+/* ── MAIN ── */
+.main{margin-left:var(--sw);min-height:100vh}
+
+/* ── SECTIONS ── */
+.sec{display:none}
+.sec.active{display:block}
+.sec-inner{max-width:820px;padding:52px 56px 0}
+.sec-tag{font-size:11px;text-transform:uppercase;letter-spacing:.1em;color:#7a6040;margin-bottom:8px}
+.sec-title{font-family:Georgia,serif;font-size:36px;font-weight:normal;color:var(--green);line-height:1.2;margin-bottom:28px}
+
+/* video */
+.vid-bar{
+  background:var(--green);border-radius:8px;padding:16px 20px;
+  display:flex;align-items:center;gap:14px;margin-bottom:36px;
+}
+.play{
+  width:38px;height:38px;background:var(--sand);border-radius:50%;
+  display:flex;align-items:center;justify-content:center;flex-shrink:0;
+}
+.play::after{
+  content:'';border-style:solid;
+  border-width:6px 0 6px 11px;
+  border-color:transparent transparent transparent var(--green);
+  margin-left:3px;
+}
+.vid-bar iframe{width:100%;height:100%}
+.vid-embed{width:100%;aspect-ratio:16/9;border-radius:8px;overflow:hidden;margin-bottom:36px}
+.vid-embed iframe{width:100%;height:100%;border:none}
+.vid-lbl strong{display:block;font-size:14.5px;color:#fff;margin-bottom:2px}
+.vid-lbl span{font-size:12.5px;color:rgba(200,184,154,.65)}
+
+/* prose */
+.prose h2{
+  font-family:Georgia,serif;font-size:19px;font-weight:normal;color:var(--green);
+  margin:32px 0 10px;padding-bottom:8px;border-bottom:1px solid rgba(200,184,154,.4);
+}
+.prose h2:first-child{margin-top:0}
+.prose p{font-size:15px;line-height:1.72;color:#333;margin-bottom:12px}
+.prose ul{list-style:none;padding:0;margin:0 0 14px}
+.prose li{font-size:15px;line-height:1.66;color:#333;padding:4px 0 4px 18px;position:relative}
+.prose li::before{content:'–';position:absolute;left:0;color:#9a7a56}
+.prose li strong{color:#1a1a1a}
+.callout{
+  background:rgba(200,184,154,.18);border-left:3px solid var(--sand);
+  border-radius:0 5px 5px 0;padding:11px 15px;margin:16px 0;
+  font-size:14.5px;color:#444;line-height:1.65;
+}
+.callout strong{color:var(--green)}
+
+/* takeaways */
+.tk-wrap{max-width:820px;padding:0 56px;margin-top:40px}
+.tk{background:var(--green);border-radius:8px;padding:22px 26px}
+.tk-head{display:flex;align-items:center;gap:9px;margin-bottom:16px}
+.tk-icon{
+  width:22px;height:22px;background:var(--sand);border-radius:4px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--green);font-weight:700;flex-shrink:0;
+}
+.tk-head span{font-family:Georgia,serif;font-size:13px;color:var(--sand);text-transform:uppercase;letter-spacing:.08em}
+.tk ul{list-style:none;padding:0;margin:0}
+.tk li{
+  font-size:14px;line-height:1.62;color:rgba(255,255,255,.85);
+  padding:8px 0 8px 18px;border-bottom:1px solid rgba(200,184,154,.13);position:relative;
+}
+.tk li:last-child{border-bottom:none}
+.tk li::before{content:'→';position:absolute;left:0;color:var(--sand);font-size:12px}
+
+/* nav footer */
+.nav-foot{
+  max-width:820px;padding:24px 56px 44px;
+  display:flex;align-items:center;justify-content:space-between;
+  margin-top:28px;border-top:1px solid rgba(45,74,45,.12);
+}
+.step-ct{font-size:13px;color:var(--muted)}
+.nav-btns{display:flex;gap:10px}
+.btn{
+  padding:9px 20px;border-radius:6px;font-size:14px;
+  cursor:pointer;font-family:inherit;border:none;transition:all .14s;line-height:1;
+}
+.btn-g{background:none;border:1.5px solid rgba(45,74,45,.25);color:var(--green)}
+.btn-g:hover:not(:disabled){border-color:var(--green);background:rgba(45,74,45,.06)}
+.btn-s{background:var(--green);color:#fff}
+.btn-s:hover:not(:disabled){background:var(--green-h)}
+.btn:disabled{opacity:.3;cursor:not-allowed}
+
+/* mobile */
+.mob-head{display:none}
+.overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:199}
+.overlay.show{display:block}
+
+@media(max-width:780px){
+  .sidebar{transform:translateX(-100%);transition:transform .24s ease}
+  .sidebar.open{transform:translateX(0)}
+  .main{margin-left:0}
+  .mob-head{
+    display:flex;align-items:center;justify-content:space-between;
+    padding:14px 18px;background:var(--green);position:sticky;top:0;z-index:100;
+  }
+  .mob-head span{font-family:Georgia,serif;font-size:14px;color:var(--sand)}
+  .hbg{background:none;border:none;cursor:pointer;display:flex;flex-direction:column;gap:5px;padding:4px}
+  .hbg i{display:block;width:20px;height:2px;background:var(--sand);border-radius:2px}
+  .sec-inner{padding:28px 20px 0}
+  .sec-title{font-size:26px}
+  .tk-wrap{padding:0 20px}
+  .nav-foot{padding:20px 20px 36px}
+}
+</style>
+</head>
+<body>
+
+<div class="overlay" id="overlay"></div>
+
+<aside class="sidebar" id="sidebar">
+  <div class="sb-head">
+    <h1>Bonsai Walkthrough</h1>
+    <p>Companion Guide</p>
+  </div>
+  <nav class="sb-nav" id="sbNav"></nav>
+</aside>
+
+<main class="main">
+  <div class="mob-head">
+    <span>Bonsai Walkthrough</span>
+    <button class="hbg" id="menuBtn" aria-label="Menu"><i></i><i></i><i></i></button>
+  </div>
+  <div id="secs"></div>
+</main>
+
+<script>
+const DATA=[
+{
+  tag:"Overview",title:"Introduction",video:null,
+  body:`
+    <h2>What Bonsai Is</h2>
+    <p>A walkthrough of Bonsai end to end, using the Granite Drive project as the example. Bonsai replaces the GSA Tracker and Avaza, so everything lives in one platform. The goal is a rounded understanding of how this looks in your business — both the setup of a project and how it's used day to day.</p>
+    <h2>Who Needs to Know What</h2>
+    <ul>
+      <li>A few of you (probably you and Jarod) want the full picture: how to set it up, troubleshoot, and enhance it</li>
+      <li>Other team members may only need the day-to-day basics, like logging time</li>
+    </ul>
+    <h2>How We've Built It, and Why</h2>
+    <ul>
+      <li>Lean, focused, and practical, in line with how you actually work</li>
+      <li>Easier to layer more on once it's being used than the other way around</li>
+      <li>Deliberately avoiding information overload so it gets adopted well</li>
+    </ul>
+    <h2>How the Videos Are Structured</h2>
+    <p>Broken into buckets following the project lifecycle: Lead to Agreement, Project Setup, Execution, Invoicing, and Reporting &amp; Settings. Everything in Bonsai is interconnected, so it's not a perfect demarcation, but the lifecycle gives the structure.</p>
+    <h2>What Happens After You've Watched</h2>
+    <ul>
+      <li>We get on a call to review: your questions, anything we've missed, anything you'd change</li>
+      <li>We make those changes, then give you a click-by-click guide to set up and mock-run a project yourself</li>
+      <li>From there we're close to going live, whether that's alongside the tracker for a bit or a straight cut</li>
+    </ul>`,
+  tk:[
+    "Bonsai replaces the GSA Tracker and Avaza — everything in one platform.",
+    "Not everyone needs the full picture; tailor how deeply each team member engages.",
+    "Built lean and practical to maximise adoption before layering on more.",
+    "After watching: review call → click-by-click guide → go live."
+  ]
+},
+{
+  tag:"Chapter 01",title:"Lead to Agreement",video:null,
+  body:`
+    <p>Everything from a lead first coming into the system through to a contract being signed. This also covers transferring a currently active project into Bonsai.</p>
+    <h2>How Bonsai Is Structured: Objects and Views</h2>
+    <p>Everything in Bonsai is an object — estimates, proposals, contracts, projects, clients — and they're all interconnected.</p>
+    <ul>
+      <li>From inside one object you see the related ones and jump between them. Open a project and you see its client, proposals, contracts, and invoices</li>
+      <li>Every object has views you can filter, sort, and save (lists, boards, Gantt). The same view logic repeats on every screen, so it's worth getting comfortable with once</li>
+    </ul>
+    <h2>Start Lean: Capture Every Lead as a Project</h2>
+    <ul>
+      <li>When a lead comes in, create a shell project and set the status to <strong>Lead</strong></li>
+      <li>That gives you a deal pipeline and a way to manage leads from day one</li>
+      <li>It's a first step toward where we want to get to: HubSpot, automated touchpoints, and pipeline metrics down the track</li>
+    </ul>
+    <h2>Setting Up the Client and Contact</h2>
+    <p>The company (same thing as a client) sits at the top, with contacts underneath.</p>
+    <ul>
+      <li>As many contacts as you want, with one primary contact</li>
+      <li>Proposals and contracts default to the primary contact, which you can change</li>
+      <li>From the company screen you see all its contacts, deals, and projects</li>
+    </ul>
+    <h2>Creating the Project Shell</h2>
+    <ul>
+      <li>Create it from the company or from the Projects object — either way it links up</li>
+      <li>Put in a placeholder title; the proper settings come later at setup</li>
+      <li>Set the status to <strong>Lead</strong>: no proposal sent, no contract, no live project yet</li>
+    </ul>
+    <h2>Two Paths to an Agreement</h2>
+    <ul>
+      <li><strong>Contract only</strong> — for warmer leads or contractors you know are likely to close. Faster, no selling needed</li>
+      <li><strong>Proposal then contract</strong> — for colder leads that need more selling. The proposal is the selling mechanism: more visual, tailored to their situation</li>
+    </ul>
+    <h2>Building a Proposal</h2>
+    <ul>
+      <li><strong>Templates are the time-saver:</strong> one per build type (custom home, residential remodel, commercial, multifamily) so you only enter client-specific info each time</li>
+      <li>Don't build a template from the template screen — build a proposal the way you want, then Save as template</li>
+      <li>Customise the scope of work, work breakdown, and fee schedule to the client</li>
+      <li>Add sections freely (text, image, files), but only one fee summary per proposal</li>
+      <li>Fee structure is single option by default. Multi-option (client picks a tier) is possible at the template level, but you don't use it</li>
+      <li>On the right panel: leave the styles, set an expiration date, save as template, download PDF</li>
+      <li>You can mark a proposal as accepted manually if they accept verbally</li>
+    </ul>
+    <div class="callout"><strong>Worth knowing:</strong> the payment schedule isn't native to a proposal. Add it as a text section with a table.</div>
+    <h2>Services, and What They Link To</h2>
+    <p>The different services you offer, organised in categories with a price and type (flat, per day, per hour, per item).</p>
+    <ul>
+      <li>Link a service to a proposal: select it and set the quantity, and the fee updates</li>
+    </ul>
+    <div class="callout"><strong>Worth knowing:</strong> services link to proposals and invoices, not contracts. On invoices they're how you bill additional services (via tasks, covered later).</div>
+    <h2>Auto-Creating an Invoice When a Proposal Is Accepted</h2>
+    <ul>
+      <li>You can set an invoice to create automatically when the proposal is accepted, with a pay option in the client's email</li>
+      <li>Can be a percentage of the total</li>
+      <li>You'll do this at the contract level instead, so leave it off on the proposal</li>
+    </ul>
+    <h2>Building and Sending a Contract</h2>
+    <p>Contracts work the same way as proposals: templates by build type, linked to a project.</p>
+    <ul>
+      <li>Add the specific legal language for the client</li>
+      <li><strong>The key setting is Require Upfront Payment:</strong> toggle it on and the client gets the retainer invoice the moment they sign</li>
+      <li>You sign first (this is what the lawyers are after), then send to the client</li>
+      <li>Status moves through: sent → awaiting deposit → signed and paid</li>
+      <li>Reminder emails chase an unsigned contract. They stop after 16 days, and Bonsai doesn't expose the exact cadence</li>
+    </ul>
+    <div class="callout"><strong>Worth knowing:</strong> contracts aren't linked to the services table.</div>
+    <h2>Keeping the Project Status Current</h2>
+    <p>As a lead moves through, update the project status: proposal sent → contract sent → active. This is what creates the deal pipeline view across all projects.</p>`,
+  tk:[
+    "Create a shell project for every lead with status = Lead to build a pipeline from day one.",
+    "Two paths to agreement: contract only (warm leads) or proposal then contract (colder leads).",
+    "Proposal templates save time — build the proposal you want, then Save as Template.",
+    "The key contract setting: Require Upfront Payment triggers the retainer invoice on signing.",
+    "Update project status as leads progress to maintain a live deal pipeline."
+  ]
+},
+{
+  tag:"Chapter 02",title:"Project Setup",video:null,
+  body:`
+    <p>Contract's signed. Now set the project up so it's ready to work. Open the project to land on the home dashboard: timeline, documents, custom fields, status, and all the project sections.</p>
+    <h2>Settings: Details</h2>
+    <ul>
+      <li>Enter the project ID</li>
+      <li><strong>Tentative toggle:</strong> stops team notifications when you don't want activity broadcast</li>
+      <li>Set the project start date</li>
+      <li>Toggle whether Bonsai auto-sends clients reminders for outstanding invoices and expiring documents</li>
+    </ul>
+    <h2>Settings: Billing, and How Rates Work</h2>
+    <p>Less critical on a fixed fee project, but worth setting up because it drives metrics like earned value. The setup is the same for fixed fee or T&amp;M.</p>
+    <ul>
+      <li><strong>Project hourly rate</strong> — a flat rate for the project (can be overridden per task when logging time)</li>
+      <li><strong>Service hourly rate</strong> — links the rate to a service, mainly for additional services</li>
+      <li><strong>Member hourly rate</strong> — either the member's default rate (set on their profile) or via a rate card</li>
+    </ul>
+    <h2>How the Rate Card Cascade Works</h2>
+    <p>This is the part worth understanding, because it connects everything.</p>
+    <ul>
+      <li>Each member has a role (principal, PM, contractor, Upwork, etc.)</li>
+      <li>Roles map to rate cards</li>
+      <li>A rate card sets the billable rate per role for a type (e.g. Residential)</li>
+      <li>The flow: set the rate at the role level → assign the role to a member → the role maps to a rate card → apply the rate card to the project</li>
+    </ul>
+    <div class="callout"><strong>Worth knowing:</strong> there's also a non-billable project type. We'll set up a General Timekeeping project for all non-billable hours, the same way you use Avaza now, so admin time doesn't hit a client project.</div>
+    <h2>Settings: Budget</h2>
+    <ul>
+      <li>Set by fee or time. Granite Drive is time-based: 240 hours</li>
+      <li>Track billable, non-billable, or both</li>
+      <li><strong>Constraint:</strong> one budget alert threshold per project. Start at 70% — the PM gets an email — then update it to the next level via SOP</li>
+    </ul>
+    <h2>Settings: Task Lists</h2>
+    <p>These map to the phases of a project (pre-design, schematic design, etc.) and group the tasks within each phase. Set these at the start so the phases are defined before templates are applied.</p>
+    <h2>Custom Fields (Mirroring the Tracker)</h2>
+    <p>These mirror the GSA tracker: retainer and progress statuses, the 90-day trigger, last contact date, consultant fields.</p>
+    <ul>
+      <li>Set them at setup, then update through execution like the tracker today</li>
+      <li>Add new ones at the project level as text, number, or select</li>
+      <li>Billing and financials show here too, updating automatically as time and costs are logged</li>
+    </ul>
+    <h2>Tasks: Templates</h2>
+    <p>Pre-defined sets of tasks reused across projects (e.g. a Schematic Design template).</p>
+    <ul>
+      <li>Set up once with tasks, details, subtasks, even attached files</li>
+      <li>Apply a template to a task list and its tasks drop straight in</li>
+      <li>Group the task view by task list so each phase sits together</li>
+    </ul>
+    <h2>Tasks: Setting Them Up</h2>
+    <ul>
+      <li>Set assignees, priority, and estimates at the start</li>
+      <li>The Gantt view shows tasks on a timeline once they have start and end dates</li>
+      <li>Inside a task: subtasks, description, dates, and a service (attaching a service makes the billable rate follow it)</li>
+    </ul>
+    <div class="callout"><strong>Worth knowing:</strong> additional services count against the project budget and there's no way to exclude them. The workaround is to bump the budget to match when scope grows.</div>
+    <h2>Setting Up Milestone Invoices</h2>
+    <p>Create the milestone invoices at setup and schedule them.</p>
+    <ul>
+      <li>Set an issue date (e.g. 90 days out) and it schedules to send then</li>
+      <li>The day before, Bonsai notifies you so you can cancel or amend — otherwise it sends automatically</li>
+      <li>This doubles as the 90-day trigger, so nothing has to be remembered</li>
+    </ul>`,
+  tk:[
+    "Rate card cascade: role → rate card → project type → member. Set it once, it flows everywhere.",
+    "Task list templates drop pre-defined phases and tasks straight into new projects.",
+    "Custom fields mirror the GSA tracker; set them at setup, update through execution.",
+    "Milestone invoices scheduled at setup auto-send and double as the 90-day trigger.",
+    "Set up a General Timekeeping project for all non-billable admin hours."
+  ]
+},
+{
+  tag:"Chapter 03",title:"Project Execution",video:null,
+  body:`
+    <p>Doing the work, managing the project, and seeing what's happening — from setup through to completion.</p>
+    <h2>Logging Time</h2>
+    <p>Time is logged at the task level, a few ways:</p>
+    <ul>
+      <li><strong>The timer in the top-right:</strong> pick the project and task, mark billable or non-billable. The rate comes from project settings (overridable here)</li>
+      <li><strong>Within the task:</strong> log after the fact by entering hours and clicking add time</li>
+      <li>It bubbles up to the project, tracked against the budget and shown in Insights and reporting</li>
+    </ul>
+    <h2>The Time Tab</h2>
+    <p>All logged sessions, filterable by team member, role, or billing status, broken down by time period or task. The same screen exists globally (the Time Tracking object) across all projects, with manual entry, CSV export, and a calendar view.</p>
+    <div class="callout"><strong>Worth knowing:</strong> on a fixed fee project the billing status doesn't matter much, because you're not billing on time. It's how you bill additional services though: mark the additional-service time as unbilled and everything else as billed, so only the additional services flow through when you invoice unbilled hours.</div>
+    <h2>Managing Tasks Day to Day</h2>
+    <ul>
+      <li>Update status from the task view or inside the task, where you also see key info, custom fields, activity, files, subtasks, and notes</li>
+      <li>Filter, sort, and group (by task list, due date, assignee) and switch views: list, Kanban, Gantt</li>
+      <li>Filtering by assignee is how someone sees just their tasks, or how you check what someone else is on</li>
+    </ul>
+    <h2>Following and Unfollowing Tasks</h2>
+    <ul>
+      <li>If you're on the project, you follow its tasks by default and get notified of updates</li>
+      <li>Unfollow tasks you don't need updates on</li>
+      <li>Or follow a task on a project you're not part of — useful for you or Jarod tracking something specific</li>
+    </ul>
+    <h2>Managing Tasks Across All Projects</h2>
+    <p>The Tasks object shows tasks across every project, not just one. Filter to yourself to see only your tasks, group by project, update multiple at once.</p>
+    <h2>The Workload View (Capacity Planning)</h2>
+    <p>Shows each member's allocated work against their capacity.</p>
+    <ul>
+      <li>For a task to show, it needs a start date, a due date, and a time estimate</li>
+      <li>Bonsai spreads the estimate evenly across the task's duration and measures it against the capacity set in the member's team settings</li>
+      <li>Unplanned tasks (no estimate) don't allocate against capacity — this view helps make sure everything's covered</li>
+    </ul>
+    <h2>Managing the Project State</h2>
+    <p>This maps back to the GSA tracker. The SOP would have PMs keeping their custom fields up to date at all times: status (active, waiting on client, waiting on consultant), last contact date, and so on. These bubble up to the portfolio view so anyone can see project state at a glance.</p>
+    <div class="callout"><strong>Worth knowing:</strong> payment status fields (progress one, progress two) aren't automated. When an invoice is paid it doesn't auto-update these, so there'll need to be an SOP around who updates them, or you jump straight to the invoices tab instead. Worth feeling out as you use it.</div>
+    <h2>Adding Expenses</h2>
+    <p>Allocate an expense from the Expenses tab: name, amount, tax, billable/non-billable, markup, date, receipt, category.</p>
+    <ul>
+      <li>To bill one: mark it for billing and add it to an invoice. Once invoiced it's marked billed</li>
+      <li>Both billable and non-billable flow into project and portfolio Insights as part of the cost breakdown</li>
+      <li>Expense categories add complexity — worth a separate discussion once the PM side beds in</li>
+    </ul>
+    <h2>Closing Out a Project</h2>
+    <p>When the final invoice is paid, mark the project complete and update its status. Archive it if you want it off the main project screen.</p>`,
+  tk:[
+    "Log time at the task level; it rolls up to budget tracking and reporting automatically.",
+    "On fixed fee: mark additional-service time as unbilled, standard work as billed — this controls what flows to invoices.",
+    "Custom fields keep project state current and surface it in the portfolio view — needs a PM SOP.",
+    "Payment status fields aren't automated; decide whether to rely on custom fields or the invoices tab.",
+    "Workload view requires start date, due date, and estimate on every task to show capacity accurately."
+  ]
+},
+{
+  tag:"Chapter 04",title:"Invoicing",video:null,
+  body:`
+    <p>We touch invoicing throughout, but here's the full loop, done at the global level rather than per project.</p>
+    <h2>The Invoices Object: Every Invoice in One Place</h2>
+    <ul>
+      <li>A view of every invoice across all projects</li>
+      <li>Filter by status (paid, drafted, scheduled, outstanding, overdue), by project or company</li>
+      <li>Change columns, edit payment methods</li>
+    </ul>
+    <h2>The Three Layers of Invoice Settings</h2>
+    <ul>
+      <li><strong>Global invoice settings</strong> — apply to all invoices, existing and new. Worth setting: lock attachments until paid, attach a PDF to the email. Can include the timesheet beneath time-based invoices</li>
+      <li><strong>Account defaults</strong> (My Account → Defaults → Invoices) — default late fee, tax rates, days until due, tax ID, default note</li>
+      <li><strong>Individual invoice settings</strong> — override the global settings for that one invoice</li>
+    </ul>
+    <h2>The QuickBooks Integration</h2>
+    <p>A two-way sync. After setup you can manually push an invoice, and auto-push sent and paid invoices.</p>
+    <ul>
+      <li>Customer mapping is set manually, so there are no duplicates in QuickBooks at the customer level</li>
+      <li>When an invoice is paid or updated in QuickBooks it syncs back to Bonsai — relevant if the client pays outside the Bonsai link</li>
+      <li>If they pay through the Bonsai link, Bonsai marks it paid automatically and syncs that back to QuickBooks</li>
+    </ul>
+    <div class="callout"><strong>Note:</strong> we'll set this up with your finance team.</div>
+    <h2>Creating and Sending an Invoice</h2>
+    <p>Create from a project (Billing → new invoice) or from the Invoices object linked to a project.</p>
+    <ul>
+      <li>The right panel mirrors the defaults, which can be overridden (late fees, tax, payment methods)</li>
+      <li>If payment comes in outside Bonsai, mark it received here</li>
+      <li>Issue date controls timing: today to send now, or a future date to schedule (same as the milestone invoices at setup)</li>
+      <li>Automations can send a personalised message when the invoice is paid — a nice touchpoint</li>
+    </ul>
+    <h2>What You Can Put on an Invoice</h2>
+    <ul>
+      <li>Custom text line items</li>
+      <li>A service (linked from the services table)</li>
+      <li>An expense (pulls in unbilled expenses)</li>
+      <li><strong>Unbilled time</strong> — how you bill additional services: mark normal tasks billed, leave additional services unbilled, add only the unbilled time. Display by service, role, or task</li>
+    </ul>
+    <h2>Sending It</h2>
+    <ul>
+      <li>Send natively or via URL</li>
+      <li>The client views and pays (card or bank transfer)</li>
+      <li>Paid through the link marks it paid automatically — time, expenses, and statuses all update</li>
+    </ul>
+    <h2>Recap: The Ways an Invoice Gets Sent</h2>
+    <ul>
+      <li>Retainers auto-generate once the contract is signed</li>
+      <li>Milestone invoices scheduled to send at progress points</li>
+      <li>Manual invoices for expenses or additional services</li>
+      <li>Reminders sent automatically, toggleable, stopping 16 days after due date</li>
+      <li>An SOP to keep the project's payment-status fields updated, since that part isn't automated</li>
+    </ul>`,
+  tk:[
+    "Three layers of settings: global → account defaults → individual invoice. Each overrides the one above.",
+    "QuickBooks is a two-way sync; customer mapping is manual to avoid duplicates.",
+    "Unbilled time is how you bill additional services: mark standard work billed, leave extras unbilled, add only unbilled time to the invoice.",
+    "Five ways invoices get sent: retainer on signing, milestone schedule, manual, reminders, and URL share.",
+    "Payment status fields aren't auto-updated when an invoice is paid — needs an SOP."
+  ]
+},
+{
+  tag:"Chapter 05",title:"Reporting &amp; Settings",video:null,
+  body:`
+    <p>Reporting from two levels: within a project, and at a global or portfolio level. Plus a couple of remaining settings.</p>
+    <h2>Project-Level Insights: The Command Centre</h2>
+    <p>Get into the project and go to the Insights tab. It's the command centre for seeing where a project's at: how it's tracking, the finances, the budget, team members and what they've been doing, and completed tasks.</p>
+    <ul>
+      <li><strong>Billing status</strong> — the billable total. Once all the progress and retainer invoices are created there's nothing left unbilled</li>
+      <li><strong>Cost breakdown</strong> — total labour cost (the cost attributed to each team member for their tracked time) plus billable and non-billable expenses, giving total cost</li>
+      <li><strong>Profitability</strong> — revenue minus cost, with the margins. Keeps updating as you work through the project</li>
+      <li><strong>Budget</strong> — how tracked time has progressed against the budget over the project</li>
+      <li><strong>Team members</strong> — total time tracked, billable time, billable amount, and how many tasks are completed, on track, or overdue</li>
+      <li><strong>Completed tasks</strong> — estimated vs actual time, the difference, and completion relative to the due date</li>
+    </ul>
+    <div class="callout"><strong>Worth knowing:</strong> only Owners and Partners can see Insights. PMs and Collaborators can't. This gets much more meaningful once real projects are running and data is flowing.</div>
+    <h2>Portfolio-Level Reporting: Across All Projects</h2>
+    <p>Bonsai's native reporting object, outside any single project. Data flows through across projects, or for a specific project or team member. Bonsai is relatively new, so if there's a report we can't find, we can request it from them.</p>
+    <p>The reports worth drilling into:</p>
+    <ul>
+      <li><strong>Utilization</strong> — total time tracked as a percentage of capacity. Total utilization is billable and non-billable, or filter to billable only. Break down by project or time period</li>
+      <li><strong>Project Profitability</strong> — margin, revenue, and total cost across all projects</li>
+      <li><strong>Project Billing</strong> — billable and unbillable amount per project, so you see what's remaining to be billed</li>
+      <li><strong>Team Profitability</strong> — billable time and its revenue against cost, giving time profit and margin. Also capacity profit and margin (capacity cost is the team member's cost at full capacity)</li>
+      <li><strong>Project Health</strong> — set health manually (at risk, good, needs attention), see budget progress and tasks completed/on track/overdue</li>
+    </ul>
+    <div class="callout"><strong>Constraint:</strong> Bonsai can't aggregate portfolio WIP natively the way the tracker does. That lives in a supplementary Google Sheet.</div>
+    <h2>Importing and Exporting Data</h2>
+    <p>Under Account → Data, you can import data and download any of the data you want. Useful if we want more bespoke or custom reporting.</p>
+    <h2>Other Settings</h2>
+    <ul>
+      <li><strong>Defaults</strong> — account-wide settings (rates, reminders, invoice defaults) that flow into every project</li>
+      <li><strong>Permissions</strong> — role-based access, who sees what (Insights is Owners/Partners only)</li>
+      <li><strong>Company</strong> — branding, business details, integrations like QuickBooks</li>
+    </ul>
+    <h2>Beyond Bonsai</h2>
+    <p>A few firm-level metrics sit outside Bonsai and are worth tracking separately, plus some KPIs Bonsai can't measure.</p>
+    <ul>
+      <li><strong>Firm-level:</strong> revenue per employee, net revenue multiplier, gross margin by project type, backlog</li>
+      <li><strong>Can't measure:</strong> QC/rework, training, client feedback, plan-review resubmittals</li>
+    </ul>
+    <p>A separate conversation. The priority is getting the core Bonsai metrics flowing first.</p>`,
+  tk:[
+    "Project Insights (Owners/Partners only): billing status, cost breakdown, profitability, budget burn, and team performance.",
+    "Key portfolio reports: Utilization, Project Profitability, Project Billing, Team Profitability, Project Health.",
+    "Bonsai can't aggregate portfolio WIP natively — keep a supplementary Google Sheet for that.",
+    "Firm-level metrics and QC KPIs live outside Bonsai; tackle those after core metrics are flowing.",
+    "Data import/export is under Account → Data for custom or bespoke reporting."
+  ]
+}
+];
+
+const N=DATA.length;
+let cur=0;
+
+function vidHtml(v){
+  if(!v) return `<div class="vid-bar"><div class="play"></div><div class="vid-lbl"><strong>Watch the video</strong><span>Video link to be added</span></div></div>`;
+  // detect youtube / vimeo
+  let src=v;
+  const yt=v.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+  const vm=v.match(/vimeo\.com\/(\d+)/);
+  if(yt) src=`https://www.youtube.com/embed/${yt[1]}`;
+  else if(vm) src=`https://player.vimeo.com/video/${vm[1]}`;
+  return `<div class="vid-embed"><iframe src="${src}" allowfullscreen></iframe></div>`;
+}
+
+function build(){
+  const nav=document.getElementById('sbNav');
+  const secs=document.getElementById('secs');
+  DATA.forEach((d,i)=>{
+    // nav button
+    const b=document.createElement('button');
+    b.className='nb'+(i===0?' active':'');
+    b.dataset.i=i;
+    b.innerHTML=`<span class="nb-num">${String(i+1).padStart(2,'0')}</span><span><div class="nb-tag">${d.tag}</div><div class="nb-name">${d.title}</div></span>`;
+    b.addEventListener('click',()=>go(i));
+    nav.appendChild(b);
+
+    // section
+    const tkItems=d.tk.map(t=>`<li>${t}</li>`).join('');
+    const s=document.createElement('div');
+    s.className='sec'+(i===0?' active':'');
+    s.id='s'+i;
+    s.innerHTML=`
+      <div class="sec-inner">
+        <div class="sec-tag">${d.tag}</div>
+        <h1 class="sec-title">${d.title}</h1>
+        ${vidHtml(d.video)}
+        <div class="prose">${d.body}</div>
+      </div>
+      <div class="tk-wrap">
+        <div class="tk">
+          <div class="tk-head"><div class="tk-icon">K</div><span>Key Takeaways</span></div>
+          <ul>${tkItems}</ul>
+        </div>
+      </div>
+      <div class="nav-foot">
+        <span class="step-ct">Section ${i+1} of ${N}</span>
+        <div class="nav-btns">
+          <button class="btn btn-g" ${i===0?'disabled':''} onclick="go(${i-1})">&#8592; Previous</button>
+          <button class="btn btn-s" ${i===N-1?'disabled':''} onclick="go(${i+1})">${i===N-1?'Complete':'Next &#8594;'}</button>
+        </div>
+      </div>`;
+    secs.appendChild(s);
+  });
+}
+
+function go(i){
+  if(i<0||i>=N)return;
+  document.querySelectorAll('.sec').forEach((el,j)=>el.classList.toggle('active',j===i));
+  document.querySelectorAll('.nb').forEach((el,j)=>el.classList.toggle('active',j===i));
+  cur=i;
+  window.scrollTo({top:0,behavior:'smooth'});
+  closeSb();
+}
+
+function openSb(){document.getElementById('sidebar').classList.add('open');document.getElementById('overlay').classList.add('show')}
+function closeSb(){document.getElementById('sidebar').classList.remove('open');document.getElementById('overlay').classList.remove('show')}
+
+document.getElementById('menuBtn').addEventListener('click',openSb);
+document.getElementById('overlay').addEventListener('click',closeSb);
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowRight'||e.key==='ArrowDown')go(cur+1);
+  if(e.key==='ArrowLeft'||e.key==='ArrowUp')go(cur-1);
+});
+
+build();
+</script>
+</body>
+</html>
